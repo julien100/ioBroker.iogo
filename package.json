@@ -1,28 +1,28 @@
 {
-  "name": "iobroker.template",
+  "name": "iobroker.iogo",
   "version": "0.6.0",
-  "description": "ioBroker template Adapter",
+  "description": "iogo",
   "author": {
-    "name": "@@Author@@",
-    "email": "@@email@@"
+    "name": "Nis Nagel",
+    "email": "support@nisnagel.de"
   },
   "contributors": [
     {
-      "name": "@@Author@@",
-      "email": "@@email@@"
+      "name": "Nis Nagel",
+      "email": "support@nisnagel.de"
     }
   ],
-  "homepage": "https://github.com/ioBroker/ioBroker.template",
+  "homepage": "https://github.com/ioBroker/ioBroker.iogo",
   "license": "MIT",
   "keywords": [
     "ioBroker",
-    "template",
+    "iogo",
     "Smart Home",
     "home automation"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ioBroker/ioBroker.template"
+    "url": "https://github.com/ioBroker/ioBroker.iogo"
   },
   "dependencies": {},
   "devDependencies": {
@@ -35,7 +35,7 @@
     "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.template/issues"
+    "url": "https://github.com/ioBroker/ioBroker.iogo/issues"
   },
   "readmeFilename": "README.md"
 }

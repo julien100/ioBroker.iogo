@@ -373,8 +373,8 @@ gulp.task('updatePackages', function (done) {
 
 gulp.task('rename', function ()  {
     var newname;
-    var author = '@@Author@@';
-    var email  = '@@email@@';
+    var author = 'Nis Nagel';
+    var email  = 'support@nisnagel.de';
     for (var a = 0; a < process.argv.length; a++) {
         if (process.argv[a] === '--name') {
             newname = process.argv[a + 1]
@@ -388,7 +388,7 @@ gulp.task('rename', function ()  {
 
     console.log('Try to rename to "' + newname + '"');
     if (!newname) {
-        console.log('Please write the new template name, like: "gulp rename --name mywidgetset" --author "Author Name"');
+        console.log('Please write the new iogo name, like: "gulp rename --name mywidgetset" --author "Author Name"');
         process.exit();
     }
     if (newname.indexOf(' ') !== -1) {
@@ -399,37 +399,37 @@ gulp.task('rename', function ()  {
         console.log('Name must be lower case.');
         process.exit();
     }
-    if (fs.existsSync(__dirname + '/admin/template.png')) {
-        fs.renameSync(__dirname + '/admin/template.png',              __dirname + '/admin/' + newname + '.png');
+    if (fs.existsSync(__dirname + '/admin/iogo.png')) {
+        fs.renameSync(__dirname + '/admin/iogo.png',              __dirname + '/admin/' + newname + '.png');
     }
-    if (fs.existsSync(__dirname + '/widgets/template.html')) {
-        fs.renameSync(__dirname + '/widgets/template.html',           __dirname + '/widgets/' + newname + '.html');
+    if (fs.existsSync(__dirname + '/widgets/iogo.html')) {
+        fs.renameSync(__dirname + '/widgets/iogo.html',           __dirname + '/widgets/' + newname + '.html');
     }
-    if (fs.existsSync(__dirname + '/widgets/template/js/template.js')) {
-        fs.renameSync(__dirname + '/widgets/template/js/template.js', __dirname + '/widgets/template/js/' + newname + '.js');
+    if (fs.existsSync(__dirname + '/widgets/iogo/js/iogo.js')) {
+        fs.renameSync(__dirname + '/widgets/iogo/js/iogo.js', __dirname + '/widgets/iogo/js/' + newname + '.js');
     }
-    if (fs.existsSync(__dirname + '/widgets/template')) {
-        fs.renameSync(__dirname + '/widgets/template',                __dirname + '/widgets/' + newname);
+    if (fs.existsSync(__dirname + '/widgets/iogo')) {
+        fs.renameSync(__dirname + '/widgets/iogo',                __dirname + '/widgets/' + newname);
     }
     var patterns = [
         {
-            match: /ioBroker template Adapter/g,
+            match: /iogo/g,
             replacement: newname
         },
         {
-            match: /template/g,
+            match: /iogo/g,
             replacement: newname
         },
         {
-            match: /Template/g,
-            replacement: newname ? (newname[0].toUpperCase() + newname.substring(1)) : 'Template'
+            match: /Iogo/g,
+            replacement: newname ? (newname[0].toUpperCase() + newname.substring(1)) : 'Iogo'
         },
         {
-            match: /@@Author@@/g,
+            match: /Nis Nagel/g,
             replacement: author
         },
         {
-            match: /@@email@@/g,
+            match: /support@nisnagel.de/g,
             replacement: email
         }
     ];
