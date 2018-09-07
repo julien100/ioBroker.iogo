@@ -46,7 +46,7 @@ it is available then var.The variable is available inside a block and it's child
 You can define the same variable name inside a child without produce a conflict with the variable of the parent block.*/
 let variable = 1234;
 var FCM = require('fcm-node');
-var fcm = new FCM(adapter.config.serverKey);
+var fcm;
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
 adapter.on('unload', function (callback) {
@@ -128,7 +128,7 @@ function main() {
     adapter.log.info('config test1: '    + adapter.config.test1);
     adapter.log.info('config test1: '    + adapter.config.test2);
     adapter.log.info('config mySelect: ' + adapter.config.mySelect);
-
+    fcm = new FCM(adapter.config.serverKey);
 
     /**
      *
