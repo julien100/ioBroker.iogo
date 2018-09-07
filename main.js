@@ -45,6 +45,7 @@ const adapter = new utils.Adapter('iogo');
 it is available then var.The variable is available inside a block and it's childs, but not outside. 
 You can define the same variable name inside a child without produce a conflict with the variable of the parent block.*/
 let variable = 1234;
+var FCM = require('fcm-node');
 var fcm = new FCM(adapter.config.serverKey);
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
