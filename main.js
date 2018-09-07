@@ -45,6 +45,7 @@ const adapter = new utils.Adapter('iogo');
 it is available then var.The variable is available inside a block and it's childs, but not outside. 
 You can define the same variable name inside a child without produce a conflict with the variable of the parent block.*/
 let variable = 1234;
+var fcm = new FCM(adapter.config.serverKey);
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
 adapter.on('unload', function (callback) {
@@ -79,6 +80,33 @@ adapter.on('message', function (obj) {
         if (obj.command === 'send') {
             // e.g. send email or pushover or whatever
             console.log('send command');
+
+            var message = { 
+                to: 'feRfAeJFVBU:APA91bFWGKy871aKYJeu4uDr38FZPhf7K9YP1etp6Sow68eS_s31l4FOJEA8DziUFggcuJOOFw_zlYN54bgrwfp_w5JXNqaOsR1-nfhuE-T1v4F5tZ72dnSE14FdyKD3mRpq_15TM0Nh', 
+                priority : 'normal',
+                // notification payload, it will be handled by system tray when 
+                // your app entering into background
+                notification: {
+                    title: 'hello from server', 
+                    body: obj.message
+                },
+                //registration_ids:['cHYK2qyxVkk:APA91bHv-h7rjga141JAQtf2AHypptW6QUTk9MH-P2WU5PpweWY1QQkEIuhSeuWrU_cNAxFHr6j9LA1Gqg-vH1MZSjRXLiQtssIXjLiNCt11HLfLJvDaWw0ciUk99JSl6rMJPIi55YXz'],
+                // data payload, the biggest different between notification      
+                // payload and data payload is, you can handle payload yourself
+                // when your app entering background
+                data: {  
+                    my_key: 'my value',
+                    my_another_key: 'my another value'
+                }
+            };
+            
+            fcm.send(message, function(err, response){
+                if (err) {
+                    console.log("Can't send FCM Message.");
+                } else {
+                    console.log("Successfully sent with response: ", response);
+                }
+            });
 
             // Send response in callback if required
             if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
