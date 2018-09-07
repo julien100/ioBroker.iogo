@@ -52,7 +52,7 @@
         "materialize": true,
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/nisiode/ioBroker.iogo/master/admin/iogo.png",
-        "keywords": ["iogo", "vis", "GUI", "graphical", "scada"],
+        "keywords": ["iogo", "android", "app"],
         "readme": "https://github.com/nisiode/ioBroker.iogo/blob/master/README.md",
         "loglevel": "info",
         "type": "general",
@@ -63,7 +63,8 @@
     "native": {
         "test1": true,
         "test2": 42,
-        "mySelect": "auto"
+        "mySelect": "auto",
+        "serverKey": ""
     },
     "objects": [
 
