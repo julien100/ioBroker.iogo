@@ -44,7 +44,9 @@ const adapter = new utils.Adapter('iogo');
 /*Variable declaration, since ES6 there are let to declare variables. Let has a more clearer definition where 
 it is available then var.The variable is available inside a block and it's childs, but not outside. 
 You can define the same variable name inside a child without produce a conflict with the variable of the parent block.*/
-let variable = 1234;
+var lastMessageTime = 0;
+var lastMessageText = '';
+var users = {};
 var FCM = require('fcm-node');
 var fcm;
 
@@ -69,6 +71,13 @@ adapter.on('stateChange', function (id, state) {
     // Warning, state can be null if it was deleted
     adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
 
+    if(id == "iogo.0.nis.token"){
+        var tmp = id.replace("iogo.0.","").replace(".token","");
+        users[tmp] = state.val;
+        adapter.log.info('user ' + tmp + ' added');
+        adapter.setState('users', JSON.stringify(users));
+    }
+
     // you can use the ack flag to detect if it is status (true) or command (false)
     if (state && !state.ack) {
         adapter.log.info('ack is not set!');
@@ -77,41 +86,33 @@ adapter.on('stateChange', function (id, state) {
 
 // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
 adapter.on('message', function (obj) {
-    if (typeof obj === 'object' && obj.message) {
-        if (obj.command === 'send') {
-            // e.g. send email or pushover or whatever
-            console.log('send command');
+    if (!obj || !obj.command) return;
 
-            var message = { 
-                to: 'feRfAeJFVBU:APA91bFWGKy871aKYJeu4uDr38FZPhf7K9YP1etp6Sow68eS_s31l4FOJEA8DziUFggcuJOOFw_zlYN54bgrwfp_w5JXNqaOsR1-nfhuE-T1v4F5tZ72dnSE14FdyKD3mRpq_15TM0Nh', 
-                priority : 'normal',
-                // notification payload, it will be handled by system tray when 
-                // your app entering into background
-                notification: {
-                    title: 'hello from server', 
-                    body: obj.message
-                },
-                //registration_ids:['cHYK2qyxVkk:APA91bHv-h7rjga141JAQtf2AHypptW6QUTk9MH-P2WU5PpweWY1QQkEIuhSeuWrU_cNAxFHr6j9LA1Gqg-vH1MZSjRXLiQtssIXjLiNCt11HLfLJvDaWw0ciUk99JSl6rMJPIi55YXz'],
-                // data payload, the biggest different between notification      
-                // payload and data payload is, you can handle payload yourself
-                // when your app entering background
-                data: {  
-                    my_key: 'my value',
-                    my_another_key: 'my another value'
-                }
-            };
-            
-            fcm.send(message, function(err, response){
-                if (err) {
-                    console.log("Can't send FCM Message.");
-                } else {
-                    console.log("Successfully sent with response: ", response);
-                }
-            });
+    // filter out double messages
+    var json = JSON.stringify(obj);
+    if (lastMessageTime && lastMessageText === JSON.stringify(obj) && new Date().getTime() - lastMessageTime < 1200) {
+        adapter.log.debug('Filter out double message [first was for ' + (new Date().getTime() - lastMessageTime) + 'ms]: ' + json);
+        return;
+    }
 
-            // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-        }
+    lastMessageTime = new Date().getTime();
+    lastMessageText = json;
+
+    switch (obj.command) {
+        case 'send':
+            {
+                if (obj.message) {
+                    var count;
+                    if (typeof obj.message === 'object') {
+                        count = sendMessage(obj.message.text, obj.message.user, obj.message);
+                        console.log("es ist ein object");
+                    } else {
+                        count = sendMessage(obj.message);
+                        console.log("es ist KEIN object");
+                    }
+                    if (obj.callback) adapter.sendTo(obj.from, obj.command, count, obj.callback);
+                }
+            }
     }
 });
 
@@ -125,9 +126,7 @@ function main() {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
-    adapter.log.info('config test1: '    + adapter.config.test1);
-    adapter.log.info('config test1: '    + adapter.config.test2);
-    adapter.log.info('config mySelect: ' + adapter.config.mySelect);
+    adapter.log.info('config serverKey: '    + adapter.config.serverKey);
     fcm = new FCM(adapter.config.serverKey);
 
     /**
@@ -140,6 +139,7 @@ function main() {
      *
      */
 
+     /*
     adapter.setObject('testVariable', {
         type: 'state',
         common: {
@@ -148,7 +148,7 @@ function main() {
             role: 'indicator'
         },
         native: {}
-    });
+    });*/
 
     // in this iogo all states changes inside the adapters namespace are subscribed
     adapter.subscribeStates('*');
@@ -162,16 +162,14 @@ function main() {
      */
 
     // the variable testVariable is set to true as command (ack=false)
-    adapter.setState('testVariable', true);
+    //adapter.setState('testVariable', true);
 
     // same thing, but the value is flagged "ack"
     // ack should be always set to true if the value is received from or acknowledged from the target system
-    adapter.setState('testVariable', {val: true, ack: true});
+    //adapter.setState('testVariable', {val: true, ack: true});
 
     // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    adapter.setState('testVariable', {val: true, ack: true, expire: 30});
-
-
+    //adapter.setState('testVariable', {val: true, ack: true, expire: 30});
 
     // examples for the checkPassword/checkGroup functions
     adapter.checkPassword('admin', 'iobroker', function (res) {
@@ -182,6 +180,91 @@ function main() {
         console.log('check group user admin group admin: ' + res);
     });
 
+    adapter.getState('users', function (err, state) {
+        if (err) adapter.log.error(err);
+        if (state && state.val) {
+            try {
+                users = JSON.parse(state.val);
+            } catch (err) {
+                if (err) adapter.log.error(err);
+                adapter.log.error('Cannot parse stored user IDs!');
+            }
+        }
+    });
 
+}
 
+function sendMessage(text, user, options) {
+    if (!text && (typeof options !== 'object')) {
+        if (!text && text !== 0 && !options) {
+            adapter.log.warn('Invalid text: null');
+            return;
+        }
+    }
+
+    if (options) {
+        if (options.text !== undefined) delete options.text;
+        if (options.title !== undefined) delete options.title;
+        if (options.user !== undefined) delete options.user;
+        if (options.priority !== undefined) delete options.priority;
+    }
+
+    // convert
+    if (text !== undefined && text !== null && typeof text !== 'object') {
+        text = text.toString();
+    }
+
+    var count = 0;
+    var u;
+
+    if (user) {
+        adapter.log.debug("User:"+user);
+
+        var userarray = user.replace(/\s/g,'').split(',');
+        var matches = 0;
+        userarray.forEach(function (value) {
+            if (users[value] !== undefined) {
+                matches++;
+                count += _sendMessageHelper(users[value], value, text, options);
+            }
+        });
+        if (userarray.length != matches) adapter.log.warn(userarray.length - matches + ' of ' + userarray.length + ' recipients are unknown!');
+        return count;
+    } else {
+
+        for (u in users) {
+            count += _sendMessageHelper(users[u], u, text, options);
+        }
+    }
+    return count;
+}
+
+function _sendMessageHelper(token, user, text, title, priority) {
+    var count = 0;
+
+    adapter.log.debug('Send message to "' + user + '": ' + text);
+
+    var message = { 
+        to: token, 
+        priority : priority || 'normal',
+        notification: {
+            title: title || 'ioBroker news', 
+            body: text
+        }
+    };
+
+    if (fcm) {
+        fcm.send(message, function(err, response){
+                if (err) {
+                    console.log("Can't send FCM Message.");
+                    adapter.log.error('Cannot send message [user - ' + options.user + ']: ' + error);
+                    options = null;
+                } else {
+                    console.log("Successfully sent with response: ", response);
+                    count++;
+                }
+            });
+    }
+    
+    return count;
 }

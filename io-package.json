@@ -61,12 +61,22 @@
         "restartAdapters": []
     },
     "native": {
-        "test1": true,
-        "test2": 42,
-        "mySelect": "auto",
-        "serverKey": ""
+        "serverKey": "AAAA6vX3Q88:APA91bHV_r_xXEXV4WcRwhV8HplfO_CgGPJGfEiJf0IGCHmTs5KcU-mLy9ooUEaL8ryVCcuU3P0SKGExeWIwvbTXBN6QHHWS3iBG_LEcBcANeuZANEx4CDe3TRSKgitP6Fm0yyO7by1b"
     },
     "objects": [
-
+    ],
+    "instanceObjects": [
+        {
+            "_id": "users",
+            "type": "state",
+            "common": {
+                "role": "text",
+                "name": "Users as json, which are constantly authenticated",
+                "type": "string",
+                "read": false,
+                "write": false
+            },
+            "native": {}
+        }
     ]
 }
