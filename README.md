@@ -1,7 +1,9 @@
 ![Logo](admin/iogo.png)
 # ioBroker.iogo
 =================
-
+How to use:
+sendTo('iogo.0', 'message comes here');
+sendTo('iogo.0', {user: 'me', title:'vip news', text:'message comes here', priority:'normal'});
 
 ## Changelog
 
