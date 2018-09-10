@@ -66,17 +66,5 @@
     "objects": [
     ],
     "instanceObjects": [
-        {
-            "_id": "users",
-            "type": "state",
-            "common": {
-                "role": "text",
-                "name": "Users as json, which are constantly authenticated",
-                "type": "string",
-                "read": false,
-                "write": false
-            },
-            "native": {}
-        }
     ]
 }
