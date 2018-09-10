@@ -184,16 +184,16 @@ function sendMessage(text, user, options) {
     return count;
 }
 
-function _sendMessageHelper(token, user, text, title, priority) {
+function _sendMessageHelper(token, user, text, options) {
     var count = 0;
 
     adapter.log.debug('Send message to "' + user + '": ' + text);
 
     var message = { 
         to: token, 
-        priority : priority || 'normal',
+        priority : options.priority || 'normal',
         notification: {
-            title: title || 'ioBroker news', 
+            title: options.title || 'ioBroker news', 
             body: text
         }
     };
@@ -201,7 +201,7 @@ function _sendMessageHelper(token, user, text, title, priority) {
     if (fcm) {
         fcm.send(message, function(err, response){
                 if (err) {
-                    adapter.log.error('Cannot send message [user - ' + options.user + ']: ' + err);
+                    adapter.log.error('Cannot send message [user - ' + user + ']: ' + err);
                     options = null;
                 } else {
                     adapter.log.info("Successfully sent with response: ", response);
