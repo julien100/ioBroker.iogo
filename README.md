@@ -1,9 +1,48 @@
 ![Logo](admin/iogo.png)
+
 # ioBroker.iogo
 =================
-How to use:
-sendTo('iogo.0', 'message comes here');
-sendTo('iogo.0', {user: 'me', title:'vip news', text:'message comes here', priority:'normal'});
+
+[![NPM version](http://img.shields.io/npm/v/iobroker.iogo.svg)](https://www.npmjs.com/package/iobroker.iogo)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.iogo.svg)](https://www.npmjs.com/package/iobroker.iogo)
+[![Travis-CI](http://img.shields.io/travis/nisiode/ioBroker.iogo/master.svg)](https://travis-ci.org/nisiode/ioBroker.iogo)
+
+[![NPM](https://nodei.co/npm/iobroker.iogo.png?downloads=true)](https://nodei.co/npm/iobroker.iogo/)
+
+
+## Configuration
+This adapter does not need a configuration.
+
+## Usage
+You can send message to all authenticated users over messageBox ```sendTo('iogo', 'New message')```
+or to specific user ```sendTo('iogo', {user: 'Username', text: 'Test message'})```.
+User must be created before (please read the application documentation for further details).
+
+It is possible to specify more than one recipient (just separate the Usernames by comma). For example: Recipient: "User1,User4,User5"
+
+
+Example how to send notification customized message:
+```
+sendTo('iogo', {
+    user:                   'Username',
+    text:                   'New message',
+    title:                  'VIP News',
+    priority:               'high'
+});
+```
+
+Callbacks are supported aswell:
+```
+sendTo('iogo', {title: 'News', text: 'New message'}, function (res) {
+    console.log('Sent to ' + res + ' users');
+});
+```
+
+**Possible options**:
+- *user*: Single user or list of users
+- *text*: The notification's body text
+- *title*: The notification's title
+- *priority*: NORMAL or HIGH
 
 ## Changelog
 
