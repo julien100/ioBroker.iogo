@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "iogo",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
-            "0.0.1": {
+            "0.0.2": {
                 "en": "initial adapter",
                 "de": "Initiale Version",
                 "ru": "Первоначальный адаптер",
@@ -12,10 +12,10 @@
                 "nl": "Eerste release"
             }
         },
-		"title": "ioGo",
+		"title": "ioGo - smarthome to go",
         "titleLang": {
-            "en": "Javascript/Node.js based iogo",
-            "de": "Javascript / Node.js basierte Vorlagenadapter",
+            "en": "ioGo - smarthome to go",
+            "de": "ioGo - smarthome to go",
             "ru": "Адаптер шаблонов на основе Javascript / Node.js",
             "pt": "Adaptador de modelo baseado em Javascript / Node.js",
             "nl": "Javascript / Node.js gebaseerde sjabloonadapter",
@@ -25,7 +25,7 @@
         },
         "desc": {
             "en": "ioGo - smarthome to go",
-            "de": "ioBroker Iogo",
+            "de": "Adapter zur Kommunikation mit der App ioGo",
             "ru": "ioBroker Iogo как образец",
             "pt": "Modelo de adaptador para o ioBroker",
             "fr": "ioBroker adaptateur modèle",
