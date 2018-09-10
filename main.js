@@ -71,10 +71,10 @@ adapter.on('stateChange', function (id, state) {
     // Warning, state can be null if it was deleted
     adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
 
-    if(id == "iogo.0.nis.token"){
-        var tmp = id.replace("iogo.0.","").replace(".token","");
+    if(id.endsWith('.token')){
+        var user_name = id.replace('iogo.'+adapter.instance+'.','').replace('.token','');
         users[tmp] = state.val;
-        adapter.log.info('user ' + tmp + ' added');
+        adapter.log.info('user ' + user_name + ' changed');
         adapter.setState('users', JSON.stringify(users));
     }
 
@@ -86,6 +86,51 @@ adapter.on('stateChange', function (id, state) {
 
 // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
 adapter.on('message', function (obj) {
+    send(obj);
+    
+});
+
+// is called when databases are connected and adapter received configuration.
+// start here!
+adapter.on('ready', function () {
+    main();
+});
+
+function main() {
+
+    // The adapters config (in the instance object everything under the attribute "native") is accessible via
+    // adapter.config:
+    adapter.log.info('config serverKey: '    + adapter.config.serverKey);
+    fcm = new FCM(adapter.config.serverKey);
+
+    // in this iogo all states changes inside the adapters namespace are subscribed
+    adapter.subscribeStates('*');
+
+    // examples for the checkPassword/checkGroup functions
+    adapter.checkPassword('admin', 'iobroker', function (res) {
+        adapter.log.info('check user admin pw ioboker: ' + res);
+    });
+
+    adapter.checkGroup('admin', 'admin', function (res) {
+        adapter.log.info('check group user admin group admin: ' + res);
+    });
+
+    adapter.objects.getObjectView('system','state',{startkey: 'iogo.' + adapter.instance + '.', endkey: 'iogo.' + adapter.instance + '.\u9999'}, 
+        function (err, doc) {
+            if (doc && doc.rows) {	
+                for (var i = 0; i < doc.rows.length; i++) {
+                        var id  = doc.rows[i].id;
+                        var obj = doc.rows[i].value;
+                        adapter.log.debug('Found ' + id + ': ' + JSON.stringify(obj));
+                }
+                        if (!doc.rows.length) adapter.log.warn('No objects found.');
+            } else {
+                adapter.log.warn('No objects found: ' + err);
+            }
+    });
+}
+
+function send(obj){
     if (!obj || !obj.command) return;
 
     // filter out double messages
@@ -105,93 +150,13 @@ adapter.on('message', function (obj) {
                     var count;
                     if (typeof obj.message === 'object') {
                         count = sendMessage(obj.message.text, obj.message.user, obj.message);
-                        console.log("es ist ein object");
                     } else {
                         count = sendMessage(obj.message);
-                        console.log("es ist KEIN object");
                     }
                     if (obj.callback) adapter.sendTo(obj.from, obj.command, count, obj.callback);
                 }
             }
     }
-});
-
-// is called when databases are connected and adapter received configuration.
-// start here!
-adapter.on('ready', function () {
-    main();
-});
-
-function main() {
-
-    // The adapters config (in the instance object everything under the attribute "native") is accessible via
-    // adapter.config:
-    adapter.log.info('config serverKey: '    + adapter.config.serverKey);
-    fcm = new FCM(adapter.config.serverKey);
-
-    /**
-     *
-     *      For every state in the system there has to be also an object of type state
-     *
-     *      Here a simple iogo for a boolean variable named "testVariable"
-     *
-     *      Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-     *
-     */
-
-     /*
-    adapter.setObject('testVariable', {
-        type: 'state',
-        common: {
-            name: 'testVariable',
-            type: 'boolean',
-            role: 'indicator'
-        },
-        native: {}
-    });*/
-
-    // in this iogo all states changes inside the adapters namespace are subscribed
-    adapter.subscribeStates('*');
-
-
-    /**
-     *   setState examples
-     *
-     *   you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-     *
-     */
-
-    // the variable testVariable is set to true as command (ack=false)
-    //adapter.setState('testVariable', true);
-
-    // same thing, but the value is flagged "ack"
-    // ack should be always set to true if the value is received from or acknowledged from the target system
-    //adapter.setState('testVariable', {val: true, ack: true});
-
-    // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    //adapter.setState('testVariable', {val: true, ack: true, expire: 30});
-
-    // examples for the checkPassword/checkGroup functions
-    adapter.checkPassword('admin', 'iobroker', function (res) {
-        console.log('check user admin pw ioboker: ' + res);
-    });
-
-    adapter.checkGroup('admin', 'admin', function (res) {
-        console.log('check group user admin group admin: ' + res);
-    });
-
-    adapter.getState('users', function (err, state) {
-        if (err) adapter.log.error(err);
-        if (state && state.val) {
-            try {
-                users = JSON.parse(state.val);
-            } catch (err) {
-                if (err) adapter.log.error(err);
-                adapter.log.error('Cannot parse stored user IDs!');
-            }
-        }
-    });
-
 }
 
 function sendMessage(text, user, options) {
@@ -218,7 +183,6 @@ function sendMessage(text, user, options) {
     var u;
 
     if (user) {
-        adapter.log.debug("User:"+user);
 
         var userarray = user.replace(/\s/g,'').split(',');
         var matches = 0;
@@ -256,11 +220,10 @@ function _sendMessageHelper(token, user, text, title, priority) {
     if (fcm) {
         fcm.send(message, function(err, response){
                 if (err) {
-                    console.log("Can't send FCM Message.");
-                    adapter.log.error('Cannot send message [user - ' + options.user + ']: ' + error);
+                    adapter.log.error('Cannot send message [user - ' + options.user + ']: ' + err);
                     options = null;
                 } else {
-                    console.log("Successfully sent with response: ", response);
+                    adapter.log.info("Successfully sent with response: ", response);
                     count++;
                 }
             });
