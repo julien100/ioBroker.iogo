@@ -48,9 +48,12 @@ adapter.on('stateChange', function (id, state) {
 
     if(id.endsWith('.token')){
         var user_name = id.replace('iogo.'+adapter.instance+'.','').replace('.token','');
-        users[user_name] = state.val;
+        if(state){
+            users[user_name] = state.val;
+        }else{
+            delete users[user_name];
+        }
         adapter.log.info('user ' + user_name + ' changed');
-        adapter.setState('users', JSON.stringify(users));
     }
 
     // you can use the ack flag to detect if it is status (true) or command (false)
@@ -76,7 +79,7 @@ function main() {
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
     adapter.log.info('config serverKey: '    + adapter.config.serverKey);
-    fcm = new FCM(adapter.config.serverKey);
+    fcm = new FCM('AAAA6vX3Q88:APA91bHV_r_xXEXV4WcRwhV8HplfO_CgGPJGfEiJf0IGCHmTs5KcU-mLy9ooUEaL8ryVCcuU3P0SKGExeWIwvbTXBN6QHHWS3iBG_LEcBcANeuZANEx4CDe3TRSKgitP6Fm0yyO7by1b');
 
     // in this iogo all states changes inside the adapters namespace are subscribed
     adapter.subscribeStates('*');
@@ -90,24 +93,14 @@ function main() {
         adapter.log.info('check group user admin group admin: ' + res);
     });
 
-    adapter.objects.getObjectView('system','state',{startkey: 'iogo.' + adapter.instance + '.', endkey: 'iogo.' + adapter.instance + '.\u9999'}, 
-        function (err, doc) {
-            if (doc && doc.rows) {	
-                for (var i = 0; i < doc.rows.length; i++) {
-                        var id  = doc.rows[i].id;
-                        var obj = doc.rows[i].value;
-                        if(id.endsWith('.token')){
-                            var user_name = id.replace('iogo.'+adapter.instance+'.','').replace('.token','');
-                            users[user_name] = state.val;
-                            adapter.log.info('user ' + user_name + ' captured');
-                            adapter.setState('users', JSON.stringify(users));
-                        }
-                        adapter.log.debug('Found ' + id + ': ' + JSON.stringify(obj));
-                }
-                        if (!doc.rows.length) adapter.log.warn('No objects found.');
-            } else {
-                adapter.log.warn('No objects found: ' + err);
-            }
+    adapter.getStates('*.token', function (err, states) {
+        for (var id in states) {
+            adapter.log.debug('"' + id + '" = "' + states[id].val);
+            var val = states[id].val;
+            var user_name = id.replace('iogo.'+adapter.instance+'.','').replace('.token','');
+            users[user_name] = val;
+            adapter.log.info('user ' + user_name + ' captured');
+        }
     });
 }
 
@@ -185,15 +178,29 @@ function sendMessage(text, user, options) {
 }
 
 function _sendMessageHelper(token, user, text, options) {
+    if (!token) {
+        adapter.log.warn('Invalid token for user: '+user);
+        return;
+    }
     var count = 0;
+    var priority = 'normal';
+    var title = 'news';
+    if (options) {
+        if(options.priority !== undefined){
+            priority = options.priority;
+        }
+        if(options.title !== undefined){
+            title = options.title;
+        }
+    }
 
-    adapter.log.debug('Send message to "' + user + '": ' + text);
+    adapter.log.debug('Send message to "' + user + '": ' + text + ' (priority:'+priority+' / title:'+title+') token:'+ token);
 
     var message = { 
         to: token, 
-        priority : options.priority || 'normal',
+        priority : priority,
         notification: {
-            title: options.title || 'ioBroker news', 
+            title: title, 
             body: text
         }
     };
