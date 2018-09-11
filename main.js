@@ -79,7 +79,7 @@ function main() {
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
     adapter.log.info('config serverKey: '    + adapter.config.serverKey);
-    fcm = new FCM('AAAA6vX3Q88:APA91bHV_r_xXEXV4WcRwhV8HplfO_CgGPJGfEiJf0IGCHmTs5KcU-mLy9ooUEaL8ryVCcuU3P0SKGExeWIwvbTXBN6QHHWS3iBG_LEcBcANeuZANEx4CDe3TRSKgitP6Fm0yyO7by1b');
+    fcm = new FCM(adapter.config.serverKey);
 
     // in this iogo all states changes inside the adapters namespace are subscribed
     adapter.subscribeStates('*');
