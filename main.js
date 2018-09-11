@@ -141,13 +141,6 @@ function sendMessage(text, user, options) {
         }
     }
 
-    if (options) {
-        if (options.text !== undefined) delete options.text;
-        if (options.title !== undefined) delete options.title;
-        if (options.user !== undefined) delete options.user;
-        if (options.priority !== undefined) delete options.priority;
-    }
-
     // convert
     if (text !== undefined && text !== null && typeof text !== 'object') {
         text = text.toString();
