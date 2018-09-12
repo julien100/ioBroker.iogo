@@ -9,7 +9,6 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iogo.png?downloads=true)](https://nodei.co/npm/iobroker.iogo/)
 
-
 ## Configuration
 This adapter does not need a configuration.
 
@@ -43,6 +42,9 @@ sendTo('iogo', {title: 'News', text: 'New message'}, function (res) {
 - *text*: The notification's body text
 - *title*: The notification's title
 - *priority*: NORMAL or HIGH
+
+## Supported Environments
+As this adapter is using firebase-admin, it supports Node.js 6.0 and higher.
 
 ## Changelog
 
