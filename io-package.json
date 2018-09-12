@@ -55,7 +55,7 @@
         "keywords": ["iogo", "android", "app"],
         "readme": "https://github.com/nisiode/ioBroker.iogo/blob/master/README.md",
         "loglevel": "info",
-        "type": "general",
+        "type": "infrastructure",
         "license": "MIT",
         "messagebox": true,
         "restartAdapters": []
