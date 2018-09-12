@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iogo",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "iogo adapter for advanced communication with android app",
   "author": {
     "name": "Nis Nagel",

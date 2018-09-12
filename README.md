@@ -46,7 +46,7 @@ sendTo('iogo', {title: 'News', text: 'New message'}, function (res) {
 
 ## Changelog
 
-### 0.0.5
+### 0.0.6
 * (nisio) initial release
 
 ## License
