@@ -9,8 +9,13 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iogo.png?downloads=true)](https://nodei.co/npm/iobroker.iogo/)
 
+This adapter is adding extra featrures to the smarthome app ioGo (https://play.google.com/store/apps/details?id=de.nisnagel.iogo).
+Please navigate to settings/account in order to signup with email and password.
+After creating an account in the app, you can use this adapter for push notification.
+Additionally this adapter is storing couurrent states of your smarthome devices.
+
 ## Configuration
-This adapter does not need a configuration.
+You should set your account information (email/password). After this start the adapter.
 
 ## Usage
 You can send message to all authenticated users over messageBox ```sendTo('iogo', 'New message')```
@@ -18,7 +23,6 @@ or to specific user ```sendTo('iogo', {user: 'Username', text: 'Test message'})`
 User must be created before (please read the application documentation for further details).
 
 It is possible to specify more than one recipient (just separate the Usernames by comma). For example: Recipient: "User1,User4,User5"
-
 
 Example how to send notification customized message:
 ```
@@ -48,7 +52,7 @@ As this adapter is using firebase-admin, it supports Node.js 6.0 and higher.
 
 ## Changelog
 
-### 0.0.6
+### 0.0.7
 * (nisio) initial release
 
 ## License

@@ -22,8 +22,11 @@ You can define the same variable name inside a child without produce a conflict 
 var lastMessageTime = 0;
 var lastMessageText = '';
 var users = {};
-var FCM = require('fcm-node');
-var fcm;
+
+var firebase = require("firebase");
+var uid;
+var database;
+var loggedIn = false;
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
 adapter.on('unload', function (callback) {
@@ -55,17 +58,11 @@ adapter.on('stateChange', function (id, state) {
         }
         adapter.log.info('user ' + user_name + ' changed');
     }
-
-    // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && !state.ack) {
-        adapter.log.info('ack is not set!');
-    }
 });
 
 // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
 adapter.on('message', function (obj) {
     send(obj);
-    
 });
 
 // is called when databases are connected and adapter received configuration.
@@ -78,20 +75,37 @@ function main() {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
-    adapter.log.info('config serverKey: '    + adapter.config.serverKey);
-    fcm = new FCM(adapter.config.serverKey);
+    var config = {
+        apiKey: "AIzaSyBxrrLcJKMt33rPPfqssjoTgcJ3snwCO30",
+        authDomain: "iobroker-iogo.firebaseapp.com",
+        databaseURL: "https://iobroker-iogo.firebaseio.com",
+        projectId: "iobroker-iogo",
+        storageBucket: "iobroker-iogo.appspot.com",
+        messagingSenderId: "1009148969935"
+      };
+    firebase.initializeApp(config);
+    firebase.auth().signInWithEmailAndPassword(adapter.config.email, adapter.config.password).catch(function(error) {
+        adapter.log.error('Authentication: ' + error.code + ' # ' + error.message);
+      });
+    firebase.auth().onAuthStateChanged(function(user) {
+        loggedIn = false;
+        if (user) {
+            // User is signed in.
+            if(!user.isAnonymous){
+                uid = user.uid;
+                adapter.log.info('logged in as:' + uid);
+                loggedIn = true;
+            }
+        } else {
+          // User is signed out.
+          adapter.log.warn('logged out as:' + uid);
+          uid = null;
+        }
+    });
+    database = firebase.database();
 
     // in this iogo all states changes inside the adapters namespace are subscribed
     adapter.subscribeStates('*');
-
-    // examples for the checkPassword/checkGroup functions
-    adapter.checkPassword('admin', 'iobroker', function (res) {
-        adapter.log.info('check user admin pw ioboker: ' + res);
-    });
-
-    adapter.checkGroup('admin', 'admin', function (res) {
-        adapter.log.info('check group user admin group admin: ' + res);
-    });
 
     adapter.getStates('*.token', function (err, states) {
         for (var id in states) {
@@ -106,6 +120,7 @@ function main() {
 
 function send(obj){
     if (!obj || !obj.command) return;
+    if(!loggedIn) return;
 
     // filter out double messages
     var json = JSON.stringify(obj);
@@ -133,7 +148,7 @@ function send(obj){
     }
 }
 
-function sendMessage(text, user, options) {
+function sendMessage(text, username, options) {
     if (!text && (typeof options !== 'object')) {
         if (!text && text !== 0 && !options) {
             adapter.log.warn('Invalid text: null');
@@ -149,9 +164,9 @@ function sendMessage(text, user, options) {
     var count = 0;
     var u;
 
-    if (user) {
+    if (username) {
 
-        var userarray = user.replace(/\s/g,'').split(',');
+        var userarray = username.replace(/\s/g,'').split(',');
         var matches = 0;
         userarray.forEach(function (value) {
             if (users[value] !== undefined) {
@@ -170,9 +185,9 @@ function sendMessage(text, user, options) {
     return count;
 }
 
-function _sendMessageHelper(token, user, text, options) {
+function _sendMessageHelper(token, username, text, options) {
     if (!token) {
-        adapter.log.warn('Invalid token for user: '+user);
+        adapter.log.warn('Invalid token for user: '+username);
         return;
     }
     var count = 0;
@@ -187,28 +202,24 @@ function _sendMessageHelper(token, user, text, options) {
         }
     }
 
-    adapter.log.debug('Send message to "' + user + '": ' + text + ' (priority:'+priority+' / title:'+title+') token:'+ token);
+    adapter.log.debug('Send message to "' + username + '": ' + text + ' (priority:'+priority+' / title:'+title+') token:'+ token);
 
-    var message = { 
-        to: token, 
-        priority : priority,
-        notification: {
-            title: title, 
-            body: text
-        }
+    // A message entry.
+    var mesasageData = {
+        to: token,
+        priority: priority,
+        title: title, 
+        body: text
     };
 
-    if (fcm) {
-        fcm.send(message, function(err, response){
-                if (err) {
-                    adapter.log.error('Cannot send message [user - ' + user + ']: ' + err);
-                    options = null;
-                } else {
-                    adapter.log.info("Successfully sent with response: ", response);
-                    count++;
-                }
-            });
-    }
-    
+    adapter.log.info('database.ref:' + 'messages/' + uid);
+    database.ref('messages/' + uid).push(mesasageData, function(error) {
+        if (error) {
+            adapter.log.error(error);
+        } else {
+            adapter.log.info('saved successfully');
+        }
+    });
+
     return count;
 }

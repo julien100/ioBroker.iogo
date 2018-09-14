@@ -1,51 +1,46 @@
 {
     "common": {
         "name": "iogo",
-        "version": "0.0.6",
+        "version": "0.0.7",
         "news": {
-            "0.0.6": {
-                "en": "initial adapter",
-                "de": "Initiale Version",
-                "ru": "Первоначальный адаптер",
-                "pt": "Versão inicial",
-                "fr": "Version initiale",
-                "nl": "Eerste release"
+            "0.0.7": {
+                "en": "initial version",
+                "de": "erste Version",
+                "ru": "Первоначальная версия",
+                "pt": "versão inicial",
+                "nl": "eerste versie",
+                "fr": "version initiale",
+                "it": "versione iniziale",
+                "es": "versión inicial",
+                "pl": "początkowa wersja"
             }
         },
 		"title": "ioGo - smarthome to go",
         "titleLang": {
             "en": "ioGo - smarthome to go",
             "de": "ioGo - smarthome to go",
-            "ru": "Адаптер шаблонов на основе Javascript / Node.js",
-            "pt": "Adaptador de modelo baseado em Javascript / Node.js",
-            "nl": "Javascript / Node.js gebaseerde sjabloonadapter",
-            "fr": "Javascript / Node.js basé adaptateur de modèle",
-            "it": "Adattatore modello basato su Javascript / Node.js",
-            "es": "Adaptador de plantilla basado en JavaScript / Node.js"
+            "ru": "ioGo - smarthome to go",
+            "pt": "ioGo - smarthome to go",
+            "nl": "ioGo - smarthome to go",
+            "fr": "ioGo - smarthome to go",
+            "it": "ioGo - smarthome to go",
+            "es": "ioGo - smarthome to go",
+            "pl": "ioGo - smarthome to go"
         },
         "desc": {
-            "en": "ioGo - smarthome to go",
-            "de": "Adapter zur Kommunikation mit der App ioGo",
-            "ru": "ioBroker Iogo как образец",
-            "pt": "Modelo de adaptador para o ioBroker",
-            "fr": "ioBroker adaptateur modèle",
-            "nl": "ioBroker Iogo",
-            "it": "Adattatore modello ioBroker",
-            "es": "Adaptador de plantilla ioBroker"
+            "en": "Adapter which connects ioBroker with the smarthome app ioGo",
+            "de": "Adapter, der ioBroker mit der Smarthome App ioGo verbindet",
+            "ru": "Адаптер, который подключает ioBroker с помощью приложения smarthome ioGo",
+            "pt": "Adaptador que conecta o ioBroker com o aplicativo smarthome ioGo",
+            "nl": "Adapter die ioBroker verbindt met de smarthome-app ioGo",
+            "fr": "Adaptateur qui connecte ioBroker à l'application smarthome ioGo",
+            "it": "Adattatore che collega ioBroker con l'app smartGoGo",
+            "es": "Adaptador que conecta ioBroker con la aplicación smarthome ioGo",
+            "pl": "Adapter łączący ioBroker z aplikacją smarthome ioGo"
         },
         "authors": [
             "Nis Nagel <support@nisnagel.de>"
         ],
-        "docs": {
-            "en": "docs/en/admin.md",
-            "ru": "docs/ru/admin.md",
-            "de": "docs/de/admin.md",
-            "es": "docs/es/admin.md",
-            "it": "docs/it/admin.md",
-            "fr": "docs/fr/admin.md",
-            "nl": "docs/nl/admin.md",
-            "pt": "docs/pt/admin.md"
-        },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "icon": "iogo.png",
@@ -55,13 +50,14 @@
         "keywords": ["iogo", "android", "app"],
         "readme": "https://github.com/nisiode/ioBroker.iogo/blob/master/README.md",
         "loglevel": "info",
-        "type": "infrastructure",
+        "type": "general",
         "license": "MIT",
         "messagebox": true,
         "restartAdapters": []
     },
     "native": {
-        "serverKey": "AAAA6vX3Q88:APA91bHV_r_xXEXV4WcRwhV8HplfO_CgGPJGfEiJf0IGCHmTs5KcU-mLy9ooUEaL8ryVCcuU3P0SKGExeWIwvbTXBN6QHHWS3iBG_LEcBcANeuZANEx4CDe3TRSKgitP6Fm0yyO7by1b"
+        "email": "",
+        "password": ""
     },
     "objects": [
     ],
