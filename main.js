@@ -76,13 +76,13 @@ function main() {
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
     var config = {
-        apiKey: "AIzaSyBxrrLcJKMt33rPPfqssjoTgcJ3snwCO30",
-        authDomain: "iobroker-iogo.firebaseapp.com",
-        databaseURL: "https://iobroker-iogo.firebaseio.com",
-        projectId: "iobroker-iogo",
-        storageBucket: "iobroker-iogo.appspot.com",
-        messagingSenderId: "1009148969935"
-      };
+        apiKey: "AIzaSyB9SPQJK67Elt2KCku1uMAAy6Ofr7XzQao",
+        authDomain: "iogo-4a65d.firebaseapp.com",
+        databaseURL: "https://iogo-4a65d.firebaseio.com",
+        projectId: "iogo-4a65d",
+        storageBucket: "iogo-4a65d.appspot.com",
+        messagingSenderId: "987031769776"
+    };
     firebase.initializeApp(config);
     firebase.auth().signInWithEmailAndPassword(adapter.config.email, adapter.config.password).catch(function(error) {
         adapter.log.error('Authentication: ' + error.code + ' # ' + error.message);
